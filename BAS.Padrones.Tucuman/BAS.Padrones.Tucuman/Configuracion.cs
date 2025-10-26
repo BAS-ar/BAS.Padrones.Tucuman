@@ -20,6 +20,11 @@ namespace BAS.Padrones.Tucuman
             AlicuotaEspecial = configuration.GetSection("Alicuota especial").Get<double>();
             CoeficientesParaExistentes = configuration.GetSection("Evaluar coeficientes para existentes en padron").Get<bool>();
             CoeficientesParaInexistentes = configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Get<bool>();
+
+            if (AlicuotaEspecial.ToString().Split(',')[1].Length > 2)
+            {
+                throw new Exception($"No se permiten más de dos espacios decimales en el valor de la alícuota. Valor actual: {AlicuotaEspecial}");
+            }
         }
     }
 }

@@ -38,6 +38,7 @@ var connectionString =
 
 // Access to the database. This is extremely slow. Like 700% slower.
 var clienteRepository = new ClientesRepository(connectionString);
+clienteRepository.ObtenerClientesLocales(provinceCode);
 
 Stopwatch sw = Stopwatch.StartNew();
 Console.CursorVisible = false;
@@ -87,9 +88,11 @@ foreach (var registry in coeficientesSinPadron)
     calculadora.CargarCoeficientesRegistry(registry);
     var resultado = calculadora.CalcularAlicuota();
 
-    var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota);
-
-    outputFile.WriteLine(bsasRegistry.ToString());
+    if (resultado != null)
+    {
+        var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota);
+        outputFile.WriteLine(bsasRegistry.ToString());
+    }
 
     Console.Write($"Se han procesado {i} registros de {coeficientesSinPadron.Count} ({(((double)i / (double)coeficientesSinPadron.Count) * 100).ToString("N0")}%)");
 }

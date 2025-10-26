@@ -47,7 +47,7 @@ namespace BAS.Padrones.Tucuman
         {
             var retorno = new RetornoCalculadora();
 
-            if(_acreditanRegistry is null && !_coeficientesParaInexistentes)
+            if (_acreditanRegistry is null && !_coeficientesParaInexistentes)
             {
                 return null;
             }
@@ -82,7 +82,8 @@ namespace BAS.Padrones.Tucuman
                     return retorno;
                 }
 
-                if (_coeficienteRegistry == null || _clientesRepository.EsLocal(_acreditanRegistry.Cuit!, _options.ProvinceCode!))
+                //if (_coeficienteRegistry == null || _clientesRepository.EsLocal(_acreditanRegistry.Cuit!, _options.ProvinceCode!))
+                if (_coeficienteRegistry == null || _clientesRepository.EsLocalUsarCache(_acreditanRegistry.Cuit!))
                 {
                     retorno.Regimen = Regimen.Retencion;
                     retorno.Alicuota = _acreditanRegistry.Porcentaje!.Value * 0.5;

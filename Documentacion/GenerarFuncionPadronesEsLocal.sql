@@ -3,23 +3,25 @@
  ****   Versión X      ****
  **************************/
 
-IF EXISTS(SELECT 1 FROM sys.objects WHERE name = N'fn_padrones_eslocal') 
-   DROP FUNCTION [dbo].[fn_padrones_eslocal]
+IF EXISTS(SELECT 1 FROM sys.objects WHERE name = N'SP_PADRONES_ESLOCAL') 
+   DROP PROCEDURE [dbo].[SP_PADRONES_ESLOCAL]
 GO
 
-CREATE  FUNCTION [dbo].[fn_padrones_eslocal] (@cuit char(15), @codprv char(3)) RETURNS bit
+CREATE  PROCEDURE [dbo].[SP_PADRONES_ESLOCAL] (@codprv char(3))
 AS
 BEGIN
+SET CONCAT_NULL_YIELDS_NULL OFF
+SET ANSI_NULLS OFF
+SET QUOTED_IDENTIFIER OFF
+SET NOCOUNT ON
 
-DECLARE
-@eslocal bit
 
-SELECT @eslocal=CASE WHEN @codprv in (SELECT codprv 
-	FROM VISTACTACTESDOMICILIOS (nolock)
-	WHERE cueprefi in ('C', 'P') AND nrodoc1=@cuit)  THEN 1 ELSE 0 END
+SELECT DISTINCT d.nrodoc1
+FROM VISTACTACTESDOMICILIOS d (nolock) 
+WHERE d.cueprefi in ('C', 'P') AND isnull(d.codprv, '')=@codprv
 
-FIN:
-RETURN @eslocal
+
+
 END
 
 

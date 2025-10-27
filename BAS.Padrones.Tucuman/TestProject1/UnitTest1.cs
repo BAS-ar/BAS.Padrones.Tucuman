@@ -42,6 +42,7 @@ namespace TestProject1
             coeficienteRegistry.Excento = false;
 
             clientesRepository = new ClientesRepositoryMock();
+            clientesRepository.ObtenerClientesLocales("914");
         }
 
         [Test]

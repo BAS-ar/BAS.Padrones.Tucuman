@@ -6,6 +6,7 @@ using BAS.Padrones.Tucuman;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using System.Text;
+using System.Linq;
 //using CommandLine; 
 
 string acreditanFilepath = "";
@@ -50,7 +51,10 @@ List<CoeficienteRegistry> coeficientes = readerCoeficientes.GetRegistries();
 
 Console.WriteLine("Buscando coeficientes sin registros en el padrón...");
 // This uses 30% of the time
-var coeficientesSinPadron = coeficientes.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToList();
+// var coeficientesSinPadron = coeficientes.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToList();
+IAsyncEnumerable<CoeficienteRegistry> coeficientesAsync = coeficientes.ToAsyncEnumerable();
+var coeficientesSinPadron = await coeficientesAsync.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToListAsync();
+
 Console.WriteLine($"Se encontraron {coeficientesSinPadron.Count} coeficientes sin registro en el padrón");
 Console.WriteLine("Procesando registros de Acreditan...");
 
@@ -94,7 +98,7 @@ foreach (var registry in coeficientesSinPadron)
         outputFile.WriteLine(bsasRegistry.ToString());
     }
 
-    Console.Write($"Se han procesado {i} registros de {coeficientesSinPadron.Count} ({(((double)i / (double)coeficientesSinPadron.Count) * 100).ToString("N0")}%)");
+    Console.Write($"Se han procesado {i} registros de {coeficientesSinPadron.Count()} ({(((double)i / (double)coeficientesSinPadron.Count()) * 100).ToString("N0")}%)");
 }
 
 outputFile.Close();

@@ -1,14 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BAS.Padrones.Tucuman
+﻿namespace BAS.Padrones.Tucuman
 {
     internal class CalculadoraDeAlicuota
     {

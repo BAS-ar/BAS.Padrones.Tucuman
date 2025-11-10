@@ -3,10 +3,9 @@
 // BAS Software
 
 using BAS.Padrones.Tucuman;
-using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 using System.Text;
-using System.Linq;
 //using CommandLine; 
 
 string acreditanFilepath = "";
@@ -57,8 +56,6 @@ var coeficientesSinPadron = await coeficientesAsync.Where(c => !padron.Any(p => 
 
 Console.WriteLine($"Se encontraron {coeficientesSinPadron.Count} coeficientes sin registro en el padrón");
 Console.WriteLine("Procesando registros de Acreditan...");
-
-var random = new Random();
 
 int i = 0;
 foreach (var registry in padron)

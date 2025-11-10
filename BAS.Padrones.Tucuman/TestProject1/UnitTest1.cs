@@ -1,5 +1,4 @@
 ﻿using BAS.Padrones.Tucuman;
-using Microsoft.Identity.Client;
 
 namespace TestProject1
 {

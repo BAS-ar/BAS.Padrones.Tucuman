@@ -3,24 +3,23 @@
 // BAS Software
 
 using BAS.Padrones.Tucuman;
-using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
-using CommandLine;
+using System.Diagnostics;
 using System.Text;
+//using CommandLine; 
 
 string acreditanFilepath = "";
 string coeficientesFilepath = "";
 string outputFilepath = "";
 string provinceCode = "";
 
-Parser.Default.ParseArguments<Options>(args)
-    .WithParsed(o =>
-    {
-        acreditanFilepath = o.AcreditanFilepath ?? "acreditan.txt";
-        coeficientesFilepath = o.CoeficientesFilepath ?? "coeficientes.txt";
-        outputFilepath = o.OutputFilepath ?? "output.txt";
-        provinceCode = o.ProvinceCode ?? "914";
-    });
+var parser = new Parser(args);
+var options = parser.GetOptions(); 
+
+acreditanFilepath = options.AcreditanFilepath ?? "acreditan.txt";
+coeficientesFilepath = options.CoeficientesFilepath ?? "coeficientes.txt";
+outputFilepath = options.OutputFilepath ?? "output.txt";
+provinceCode = options.ProvinceCode ?? "914";
 
 var readerAcreditan = new TucumanAcreditanReader(acreditanFilepath);
 var readerCoeficientes = new TucumanCoeficientesReader(coeficientesFilepath);
@@ -30,15 +29,16 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
 
-var connectionString = 
-    $"Data Source={configuration["Server"]};" +
-    $"Initial Catalog={configuration["Database"]};" +
-    $"User Id={configuration["User"]};" +
-    $"Password={configuration["Password"]};" +
+var connectionString =
+    $"Data Source={configuration["Database:Server"]};" +
+    $"Initial Catalog={configuration["Database:Database"]};" +
+    $"User Id={configuration["Database:User"]};" +
+    $"Password={configuration["Database:Password"]};" +
     $"TrustServerCertificate=True";
 
 // Access to the database. This is extremely slow. Like 700% slower.
 var clienteRepository = new ClientesRepository(connectionString);
+clienteRepository.ObtenerClientesLocales(provinceCode);
 
 Stopwatch sw = Stopwatch.StartNew();
 Console.CursorVisible = false;
@@ -50,56 +50,28 @@ List<CoeficienteRegistry> coeficientes = readerCoeficientes.GetRegistries();
 
 Console.WriteLine("Buscando coeficientes sin registros en el padrón...");
 // This uses 30% of the time
-var coeficientesSinPadron = coeficientes.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToList();
+// var coeficientesSinPadron = coeficientes.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToList();
+IAsyncEnumerable<CoeficienteRegistry> coeficientesAsync = coeficientes.ToAsyncEnumerable();
+var coeficientesSinPadron = await coeficientesAsync.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToListAsync();
+
 Console.WriteLine($"Se encontraron {coeficientesSinPadron.Count} coeficientes sin registro en el padrón");
 Console.WriteLine("Procesando registros de Acreditan...");
-
-var random = new Random();
 
 int i = 0;
 foreach (var registry in padron)
 {
     Console.SetCursorPosition(0, Console.CursorTop);
     i++;
-    // Slows down a lot when looking for coeficients.
-    // could be optimized filtering registries that has no record in Acreditan
     var coeficiente = coeficientes.SingleOrDefault(c => c.Cuit == registry.Cuit);
+    var config = new Configuracion();
+    config.CargarDesdeFrameworks(configuration);
+    var calculadora = new CalculadoraDeAlicuota(clienteRepository, config, options);
+    calculadora.CargarAcreditanRegistry(registry);
+    calculadora.CargarCoeficientesRegistry(coeficiente);
+    var resultado = calculadora.CalcularAlicuota();
 
-    var bsasRegistry = new PadronRegistry(registry, coeficiente);
-    if (registry.Excento)
-    {
-        // The flow diagram says to do nothing
-        // This is NOT right, i guess. It will be applied default aliquot when not found in Padron afterwards.
-        // So, i will apply aliquot = 0
-        bsasRegistry.Alicuota = 0;
-    }
-    else
-    {
-        if (registry.Convenio == Convenio.Multilateral)
-        {
-            // Check if client is local
-            // bool localClient = random.Next(0, 100) > 50;
-            bool localClient = clienteRepository.EsLocal(registry.Cuit!, provinceCode);
-            if (localClient || coeficiente == null)
-            {
-                bsasRegistry.Alicuota = bsasRegistry.Alicuota * 0.5;
-            }
-            else
-            {
-                bsasRegistry.Regimen = Regimen.Retencion;
+    var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota);
 
-                if (coeficiente.Coeficiente > 0)
-                {
-                    // RG 116/10: 0.5 * COEFICIENTE * ALICUOTA
-                    bsasRegistry.Alicuota = registry.Porcentaje * 0.5 * coeficiente.Coeficiente.Value;
-                }
-                else
-                {
-                    bsasRegistry.Alicuota = registry.Porcentaje * 0.175;
-                }
-            }
-        }
-    }
     outputFile.WriteLine(bsasRegistry.ToString());
     Console.Write($"Se han procesado {i} registros de {padron.Count} ({(((double)i / (double)padron.Count) * 100).ToString("N0")}%)");
 }
@@ -111,35 +83,19 @@ foreach (var registry in coeficientesSinPadron)
 {
     Console.SetCursorPosition(0, Console.CursorTop);
     i++;
+    var config = new Configuracion();
+    config.CargarDesdeFrameworks(configuration);
+    var calculadora = new CalculadoraDeAlicuota(clienteRepository, config, options);
+    calculadora.CargarCoeficientesRegistry(registry);
+    var resultado = calculadora.CalcularAlicuota();
 
-    PadronRegistry bsasRegistry;
-
-    // TODO: Look up database to know if the client is local
-    // bool localClient = random.Next(0, 100) > 50;
-    bool localClient = clienteRepository.EsLocal(registry.Cuit!, provinceCode);
-    if (localClient)
+    if (resultado != null)
     {
-        bsasRegistry = new PadronRegistry(registry, 0.5);
-    }
-    else
-    {
-        if (registry.Coeficiente > 0)
-        {
-            // RG 116/10: 0.5 * COEFICIENTE * ALICUOTA
-            bsasRegistry = new PadronRegistry(coeficienteRegistry: registry, aliquotPercentage: 0.5 * registry.Coeficiente.Value);
-        }
-        else
-        {
-            // ALICUOTA * 0.175
-            bsasRegistry = new PadronRegistry(registry, 0.175);
-        }
+        var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota);
+        outputFile.WriteLine(bsasRegistry.ToString());
     }
 
-    // PadronRegistry created with only CoeficienteRegistry are always a Retencion
-    // bsasRegistry.Regimen = Regimen.Retencion;
-    outputFile.WriteLine(bsasRegistry.ToString());
-
-    Console.Write($"Se han procesado {i} registros de {coeficientesSinPadron.Count} ({(((double)i / (double)coeficientesSinPadron.Count) * 100).ToString("N0")}%)");
+    Console.Write($"Se han procesado {i} registros de {coeficientesSinPadron.Count()} ({(((double)i / (double)coeficientesSinPadron.Count()) * 100).ToString("N0")}%)");
 }
 
 outputFile.Close();

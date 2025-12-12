@@ -42,7 +42,8 @@ clienteRepository.ObtenerClientesLocales(provinceCode);
 
 Stopwatch sw = Stopwatch.StartNew();
 Console.CursorVisible = false;
-Console.WriteLine($"Servidor de base de datos: {configuration["Server"]}");
+Console.WriteLine($"Servidor de base de datos: {configuration["Database:Server"]}");
+Console.WriteLine($"Nombre de la Base de datos: {configuration["Database:Database"]}");
 Console.WriteLine($"Leyendo archivo acreditan: {acreditanFilepath}");
 List<AcreditanRegistry> padron = readerAcreditan.GetRegistries();
 Console.WriteLine($"Leyendo archivo coeficientes: {coeficientesFilepath}");
@@ -70,7 +71,7 @@ foreach (var registry in padron)
     calculadora.CargarCoeficientesRegistry(coeficiente);
     var resultado = calculadora.CalcularAlicuota();
 
-    var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota);
+    var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota, resultado.Regimen);
 
     outputFile.WriteLine(bsasRegistry.ToString());
     Console.Write($"Se han procesado {i} registros de {padron.Count} ({(((double)i / (double)padron.Count) * 100).ToString("N0")}%)");
@@ -91,7 +92,7 @@ foreach (var registry in coeficientesSinPadron)
 
     if (resultado != null)
     {
-        var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota);
+        var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota, resultado.Regimen);
         outputFile.WriteLine(bsasRegistry.ToString());
     }
 
@@ -102,6 +103,5 @@ outputFile.Close();
 sw.Stop();
 
 Console.WriteLine();
-Console.WriteLine("Listo");
 Console.WriteLine($"Procesado en {sw.Elapsed}");
 Console.CursorVisible = true;

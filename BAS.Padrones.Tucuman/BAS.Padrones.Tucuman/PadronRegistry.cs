@@ -30,9 +30,9 @@ namespace BAS.Padrones.Tucuman
                 
         }
 
-        public PadronRegistry(AcreditanRegistry acreditanRegistry, double alicuota)
+        public PadronRegistry(AcreditanRegistry acreditanRegistry, double alicuota, Regimen regimen)
         {
-            Regimen = Regimen.Percepcion;
+            Regimen = regimen;
             FechaPublicacion = acreditanRegistry.FechaDesde;
             FechaDesde = acreditanRegistry.FechaDesde;
             FechaHasta = acreditanRegistry.FechaHasta;
@@ -44,9 +44,9 @@ namespace BAS.Padrones.Tucuman
             Grupo = null;
         }
 
-        public PadronRegistry(CoeficienteRegistry coeficienteRegistry, double alicuota)
+        public PadronRegistry(CoeficienteRegistry coeficienteRegistry, double alicuota, Regimen regimen)
         {
-            Regimen = Regimen.Retencion;
+            Regimen = regimen;
             FechaPublicacion = coeficienteRegistry.Fecha;
             Cuit = coeficienteRegistry.Cuit;
             AltaBaja = null;

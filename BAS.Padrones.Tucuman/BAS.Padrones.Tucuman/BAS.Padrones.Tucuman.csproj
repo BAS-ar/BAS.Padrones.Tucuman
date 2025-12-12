@@ -16,13 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EditorConfigFiles Remove="C:\Users\admin\Documents\Dev\IIBB Tucuman\IIBB-Tucuman\BAS.Padrones.Tucuman\BAS.Padrones.Tucuman\.editorconfig" />
   </ItemGroup>
 
   <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\admin\Documents\Dev\IIBB Tucuman\IIBB-Tucuman\BAS.Padrones.Tucuman\BAS.Padrones.Tucuman\.editorconfig" />
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

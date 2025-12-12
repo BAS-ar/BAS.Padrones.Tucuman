@@ -3,7 +3,7 @@ using System.Text;
 
 namespace BAS.Padrones.Tucuman
 {
-    internal class PadronRegistry
+    public class PadronRegistry
     {
         public Regimen Regimen { get; set; }
 

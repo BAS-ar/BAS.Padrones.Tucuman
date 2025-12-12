@@ -99,9 +99,13 @@ foreach (var registry in coeficientesSinPadron)
     Console.Write($"Se han procesado {i} registros de {coeficientesSinPadron.Count()} ({(((double)i / (double)coeficientesSinPadron.Count()) * 100).ToString("N0")}%)");
 }
 
+
 outputFile.Close();
+var fInfo = new FileInfo(outputFilepath);
+
 sw.Stop();
 
 Console.WriteLine();
+Console.WriteLine($"Archivo de salida almacenado en {outputFilepath} ({(fInfo.Length/(double)1024).ToString("0")} kiB)");
 Console.WriteLine($"Procesado en {sw.Elapsed}");
 Console.CursorVisible = true;

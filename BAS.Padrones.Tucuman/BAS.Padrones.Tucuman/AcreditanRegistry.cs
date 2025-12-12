@@ -3,7 +3,7 @@
 namespace BAS.Padrones.Tucuman
 {
 
-    internal class AcreditanRegistry
+    public class AcreditanRegistry
     {
         public string? Cuit {  get; set; }
         

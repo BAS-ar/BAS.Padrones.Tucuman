@@ -1,6 +1,6 @@
 ﻿namespace BAS.Padrones.Tucuman
 {
-    internal class CalculadoraDeAlicuota
+    public class CalculadoraDeAlicuota
     {
         IClientesRepository _clientesRepository;
         AcreditanRegistry? _acreditanRegistry;

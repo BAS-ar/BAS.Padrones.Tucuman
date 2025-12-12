@@ -2,7 +2,7 @@
 
 namespace BAS.Padrones.Tucuman
 {
-    internal class CoeficienteRegistry
+    public class CoeficienteRegistry
     {
         public string? Cuit { get; set; }
 

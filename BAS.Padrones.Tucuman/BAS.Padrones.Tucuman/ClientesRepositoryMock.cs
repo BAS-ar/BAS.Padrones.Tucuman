@@ -1,6 +1,6 @@
 ﻿namespace BAS.Padrones.Tucuman
 {
-    internal class ClientesRepositoryMock : IClientesRepository
+    public class ClientesRepositoryMock : IClientesRepository
     {
         private List<string> _clientesLocalesCache;
         private int _clientesLocalesCount;

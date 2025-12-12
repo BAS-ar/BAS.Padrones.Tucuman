@@ -11,7 +11,7 @@ namespace BAS.Padrones.Tucuman
 
         public void CargarDesdeFrameworks(IConfiguration configuration)
         {
-            RazonCoeficiente = configuration.GetSection("Razon coeficiente").Get<double>();
+            RazonCoeficiente = configuration.GetSection("Coeficiente correccion").Get<double>();
             AlicuotaEspecial = configuration.GetSection("Alicuota especial").Get<double>();
             CoeficientesParaExistentes = configuration.GetSection("Evaluar coeficientes para existentes en padron").Get<bool>();
             CoeficientesParaInexistentes = configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Get<bool>();

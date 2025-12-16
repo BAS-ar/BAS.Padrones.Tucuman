@@ -3,6 +3,7 @@
 // BAS Software
 
 using BAS.Padrones.Tucuman;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.Text;
@@ -38,16 +39,45 @@ var connectionString =
 
 // Access to the database. This is extremely slow. Like 700% slower.
 var clienteRepository = new ClientesRepository(connectionString);
-clienteRepository.ObtenerClientesLocales(provinceCode);
+try
+{
+    clienteRepository.ObtenerClientesLocales(provinceCode);
+}
+catch(SqlException sqlEx)
+{
+    Console.WriteLine($"Ocurrió un error al conectarse a la base de datos. Error: {sqlEx.Message}");
+    return;
+}
 
 Stopwatch sw = Stopwatch.StartNew();
 Console.CursorVisible = false;
 Console.WriteLine($"Servidor de base de datos: {configuration["Database:Server"]}");
 Console.WriteLine($"Nombre de la Base de datos: {configuration["Database:Database"]}");
 Console.WriteLine($"Leyendo archivo acreditan: {acreditanFilepath}");
-List<AcreditanRegistry> padron = readerAcreditan.GetRegistries();
+
+List<AcreditanRegistry> padron = new();
+try
+{
+    padron = readerAcreditan.GetRegistries();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Ocurrió un error al abrir el archivo de contribuyentes. Error: {ex.Message}");
+    return;
+}
+
 Console.WriteLine($"Leyendo archivo coeficientes: {coeficientesFilepath}");
-List<CoeficienteRegistry> coeficientes = readerCoeficientes.GetRegistries();
+
+List<CoeficienteRegistry> coeficientes = new();
+try
+{
+    coeficientes = readerCoeficientes.GetRegistries();
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Ocurrió un error al abrir el archivo de coeficientes. Error: {ex.Message}");
+    return;
+}
 
 Console.WriteLine("Buscando coeficientes sin registros en el padrón...");
 // This uses 30% of the time

@@ -124,7 +124,7 @@ namespace BAS.Padrones.Tucuman
             }
             
             sb.Append(";");
-            sb.Append($"{(Alicuota?? Alicuota!.Value).ToString("N2", CultureInfo.InvariantCulture)}");
+            sb.Append($"{(Alicuota?? Alicuota!.Value).ToString("F2", CultureInfo.InvariantCulture)}");
             sb.Append(";");
             sb.Append($"{Grupo}");
             sb.Append(";");

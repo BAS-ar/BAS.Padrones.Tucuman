@@ -34,8 +34,16 @@ namespace BAS.Padrones.Tucuman
             }
             else
             {
-                Porcentaje = Double.Parse(porcentaje, CultureInfo.InvariantCulture);
+                Porcentaje = SanitizeDouble(porcentaje);
             }
+        }
+
+        public double SanitizeDouble(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return 0.0;
+
+            value = value.Replace(',', '.');
+            return Double.Parse(value, CultureInfo.InvariantCulture);
         }
     }
 

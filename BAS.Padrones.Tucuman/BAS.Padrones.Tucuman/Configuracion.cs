@@ -1,25 +1,53 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Globalization;
 
 namespace BAS.Padrones.Tucuman
 {
     public class Configuracion
     {
-        public double RazonCoeficiente = 0.5;
+        public double CoeficienteCorreccion = 0.5;
         public double AlicuotaEspecial = 0.17;
         public bool CoeficientesParaExistentes = false;
         public bool CoeficientesParaInexistentes = false;
 
         public void CargarDesdeFrameworks(IConfiguration configuration)
         {
-            RazonCoeficiente = configuration.GetSection("Coeficiente correccion").Get<double>();
-            AlicuotaEspecial = configuration.GetSection("Alicuota especial").Get<double>();
-            CoeficientesParaExistentes = configuration.GetSection("Evaluar coeficientes para existentes en padron").Get<bool>();
-            CoeficientesParaInexistentes = configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Get<bool>();
-
-            if (AlicuotaEspecial.ToString().Split(',')[1].Length > 2)
+            if (HasMoreThanTwoDecimals(configuration.GetSection("Alicuota especial").Get<string>()))
             {
                 throw new Exception($"No se permiten más de dos espacios decimales en el valor de la alícuota. Valor actual: {AlicuotaEspecial}");
             }
+
+            CoeficienteCorreccion = SanitizeDouble(configuration.GetSection("Coeficiente correccion").Get<string>());
+            AlicuotaEspecial = SanitizeDouble(configuration.GetSection("Alicuota especial").Get<string>());
+            CoeficientesParaExistentes = configuration.GetSection("Evaluar coeficientes para existentes en padron").Get<bool>();
+            CoeficientesParaInexistentes = configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Get<bool>();
+        }
+
+        public double SanitizeDouble(string? value)
+        {
+            if(string.IsNullOrWhiteSpace(value)) return 0.0;
+
+            value = value.Replace(',', '.');
+            return Double.Parse(value, CultureInfo.InvariantCulture);
+        }
+
+
+        public bool HasMoreThanTwoDecimals(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new Exception($"Valor de alícuota especial nulo.");
+
+            value = value.Replace(',', '.');
+            var parts = value.Split('.');
+            
+            // invalid case
+            if (parts.Length > 2)
+                return true;
+            
+            if (parts.Length == 1)
+                return false;
+
+            return parts[1].Length > 2;
         }
     }
 }

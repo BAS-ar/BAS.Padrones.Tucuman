@@ -16,7 +16,7 @@ namespace TestProject1
         {
             configuracion = new Configuracion();
             configuracion.AlicuotaEspecial = 0.17;
-            configuracion.RazonCoeficiente = 0.5;
+            configuracion.CoeficienteCorreccion = 0.5;
             configuracion.CoeficientesParaExistentes = false;
             configuracion.CoeficientesParaInexistentes = false;
 
@@ -156,7 +156,7 @@ namespace TestProject1
             acreditanRegistry.Convenio = Convenio.Multilateral;
             coeficienteRegistry.Coeficiente = 0.75;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
@@ -201,7 +201,7 @@ namespace TestProject1
             acreditanRegistry = null;
             coeficienteRegistry.Coeficiente = 0.75;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
@@ -221,7 +221,7 @@ namespace TestProject1
             acreditanRegistry.Convenio = Convenio.Multilateral;
             coeficienteRegistry.Coeficiente = 0;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
@@ -281,7 +281,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry = null;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -303,7 +303,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
             acreditanRegistry.Convenio = Convenio.Multilateral;
@@ -324,7 +324,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry = null;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -346,7 +346,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry.Convenio = Convenio.Local;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -367,7 +367,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry.Convenio = Convenio.Multilateral;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -388,7 +388,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry.Convenio = Convenio.Local;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -409,7 +409,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry.Convenio = Convenio.Multilateral;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -430,7 +430,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry.Convenio = Convenio.Local;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -451,7 +451,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry = null;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
@@ -472,7 +472,7 @@ namespace TestProject1
             configuracion.AlicuotaEspecial = 1.75;
             coeficienteRegistry.Coeficiente = 0.77;
             coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.RazonCoeficiente = 0.7;
+            configuracion.CoeficienteCorreccion = 0.7;
 
             acreditanRegistry = null;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local

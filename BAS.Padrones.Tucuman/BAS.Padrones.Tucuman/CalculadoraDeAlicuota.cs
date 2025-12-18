@@ -7,7 +7,7 @@
         CoeficienteRegistry? _coeficienteRegistry;
         Configuracion _configuracion;
         Parametros _options;
-        double _razonCoeficiente;
+        double _coeficienteCorreccion;
         double _alicuotaEspecial;
         bool _coeficientesParaExistentes;
         bool _coeficientesParaInexistentes;
@@ -18,7 +18,7 @@
             _configuracion = configuracion;
             _options = options;
             _alicuotaEspecial = _configuracion.AlicuotaEspecial;
-            _razonCoeficiente = _configuracion.RazonCoeficiente;
+            _coeficienteCorreccion = _configuracion.CoeficienteCorreccion;
             _coeficientesParaExistentes = _configuracion.CoeficientesParaExistentes;
             _coeficientesParaInexistentes = _configuracion.CoeficientesParaInexistentes;
         }
@@ -52,7 +52,7 @@
             if (_acreditanRegistry!.Excento)
             {
                 retorno.Regimen = Regimen.Percepcion;
-                retorno.Alicuota = 0;
+                retorno.Alicuota = 0.0;
                 return retorno;
             }
 
@@ -83,7 +83,7 @@
                 if (_coeficienteRegistry.Coeficiente > 0)
                 {
                     retorno.Regimen = Regimen.Retencion;
-                    retorno.Alicuota = _coeficienteRegistry.Porcentaje!.Value * _razonCoeficiente;
+                    retorno.Alicuota = _coeficienteRegistry.Porcentaje!.Value * _coeficienteCorreccion;
                     return retorno;
                 }
 
@@ -107,7 +107,7 @@
             }
 
             retorno.Regimen = Regimen.Retencion;
-            retorno.Alicuota = _coeficienteRegistry.Porcentaje!.Value * _razonCoeficiente;
+            retorno.Alicuota = _coeficienteRegistry.Porcentaje!.Value * _coeficienteCorreccion;
             return retorno;
         }
     }

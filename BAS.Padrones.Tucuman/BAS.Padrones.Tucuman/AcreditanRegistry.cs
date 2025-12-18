@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Data.SqlTypes;
+using System.Globalization;
 
 namespace BAS.Padrones.Tucuman
 {
@@ -26,15 +27,25 @@ namespace BAS.Padrones.Tucuman
 
         public void ParsePorcentaje(string line)
         {
-            var porcentaje = line.Substring(line.Length - 5, 5).Trim();
+            using (var sw = new StreamWriter("parsing_contributors.txt", true))
+            {
+                sw.WriteLine($"Parseando coeficiente en coeficientes");
+                sw.WriteLine($"Line: {line}");
 
-            if (porcentaje == "-----")
-            {
-                Porcentaje = null;
-            }
-            else
-            {
-                Porcentaje = SanitizeDouble(porcentaje);
+                var porcentaje = line.Substring(line.Length - 5, 5).Trim();
+                sw.WriteLine($"Substring: {porcentaje}");
+
+                if (porcentaje == "-----")
+                {
+                    Porcentaje = null;
+                    sw.WriteLine($"Retorno: null");
+                }
+                else
+                {
+                    Porcentaje = SanitizeDouble(porcentaje);
+                    sw.WriteLine(string.Format(CultureInfo.InvariantCulture, "Retorno: {0}", Porcentaje));
+                }
+                sw.WriteLine($"---***---");
             }
         }
 

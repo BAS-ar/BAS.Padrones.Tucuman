@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Data.SqlTypes;
+using System.Globalization;
 
 namespace BAS.Padrones.Tucuman
 {
@@ -23,29 +24,46 @@ namespace BAS.Padrones.Tucuman
 
         public void ParsePorcentaje(string line)
         {
-            var porcentaje = line.Substring(line.Length - 5, 5).Trim();
+            using (var sw = new StreamWriter("parsing_coefficients.txt", true))
+            {
+                sw.WriteLine($"Parseando porcentaje en coeficientes");
+                sw.WriteLine($"Line: {line}");
 
-            if (porcentaje == "-----")
-            {
-                Porcentaje = null;
-            }
-            else
-            {
-                Porcentaje = SanitizeDouble(porcentaje);
+                var porcentaje = line.Substring(line.Length - 5, 5).Trim();
+                sw.WriteLine($"Substring: {porcentaje}");
+                if (porcentaje == "-----")
+                {
+                    Porcentaje = null;
+                    sw.WriteLine($"Retorno: null");
+                }
+                else
+                {
+                    Porcentaje = SanitizeDouble(porcentaje);
+                    sw.WriteLine(string.Format(CultureInfo.InvariantCulture, "Retorno: {0}", Porcentaje));
+                }
+                sw.WriteLine($"---***---");
             }
         }
 
-        public void ParseCoeficiente(string coeficiente)
+        public void ParseCoeficiente(string line)
         {
-            var substring = coeficiente.Substring(16, 6);
-
-            if (substring == "-.----" || substring == "-,----")
+            using (var sw = new StreamWriter("parsing_coefficients.txt", true))
             {
-                Coeficiente = null;
-            }
-            else
-            {
-                Coeficiente = SanitizeDouble(substring);
+                sw.WriteLine($"Parseando coeficiente en coeficientes");
+                sw.WriteLine($"Line: {line}");
+                var substring = line.Substring(16, 6);
+                sw.WriteLine($"Substring: {substring}");
+                if (substring == "-.----" || substring == "-,----")
+                {
+                    Coeficiente = null;
+                    sw.WriteLine($"Retorno: null");
+                }
+                else
+                {
+                    Coeficiente = SanitizeDouble(substring);
+                    sw.WriteLine(string.Format(CultureInfo.InvariantCulture, "Retorno: {0}", Coeficiente));
+                }
+                sw.WriteLine($"---***---");
             }
         }
 

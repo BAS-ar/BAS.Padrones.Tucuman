@@ -1,0 +1,12 @@
+﻿{
+  "Database": {
+    "Server": "SERVER_NAME",
+    "Database": "DATABASE_NAME",
+    "User": "sa",
+    "Password": "sa"
+  },
+  "Evaluar coeficientes para existentes en padron": true,
+  "Evaluar coeficientes para inexistentes en padron": true,
+  "Coeficiente correccion": 0.5,
+  "Alicuota especial": 0.17
+}

@@ -21,6 +21,11 @@ namespace BAS.Padrones.Tucuman
             AlicuotaEspecial = SanitizeDouble(configuration.GetSection("Alicuota especial").Get<string>());
             CoeficientesParaExistentes = configuration.GetSection("Evaluar coeficientes para existentes en padron").Get<bool>();
             CoeficientesParaInexistentes = configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Get<bool>();
+
+            if(CoeficienteCorreccion == 0)
+            {
+                CoeficienteCorreccion = 1;
+            }
         }
 
         public double SanitizeDouble(string? value)

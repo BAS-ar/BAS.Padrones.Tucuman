@@ -6,17 +6,15 @@
         AcreditanRegistry? _acreditanRegistry;
         CoeficienteRegistry? _coeficienteRegistry;
         Configuracion _configuracion;
-        Parametros _options;
         double _coeficienteCorreccion;
         double _alicuotaEspecial;
         bool _coeficientesParaExistentes;
         bool _coeficientesParaInexistentes;
 
-        public CalculadoraDeAlicuota(IClientesRepository clientesRepository, Configuracion configuracion, Parametros options)
+        public CalculadoraDeAlicuota(IClientesRepository clientesRepository, Configuracion configuracion)
         {
             _clientesRepository = clientesRepository;
             _configuracion = configuracion;
-            _options = options;
             _alicuotaEspecial = _configuracion.AlicuotaEspecial;
             _coeficienteCorreccion = _configuracion.CoeficienteCorreccion;
             _coeficientesParaExistentes = _configuracion.CoeficientesParaExistentes;
@@ -33,10 +31,8 @@
             _coeficienteRegistry = coeficienteRegistry;
         }
 
-        public RetornoCalculadora? CalcularAlicuota()
+        public double? CalcularAlicuota()
         {
-            var retorno = new RetornoCalculadora();
-
             if (_acreditanRegistry is null && !_coeficientesParaInexistentes)
             {
                 return null;
@@ -44,71 +40,45 @@
 
             if (_acreditanRegistry is null && _coeficientesParaInexistentes)
             {
-                retorno.Regimen = Regimen.Retencion;
-                retorno.Alicuota = SoloEnCoeficientes().Alicuota;
-                return retorno;
+                if (_coeficienteRegistry!.Coeficiente == 0)
+                {
+                    return _alicuotaEspecial;
+                }
+
+                return _coeficienteRegistry.Porcentaje!.Value * _coeficienteCorreccion;
             }
 
             if (_acreditanRegistry!.Excento)
             {
-                retorno.Regimen = Regimen.Percepcion;
-                retorno.Alicuota = 0.0;
-                return retorno;
+                return 0.0;
             }
 
             if (_acreditanRegistry.Convenio == Convenio.Local)
             {
-                retorno.Regimen = Regimen.Percepcion;
-                retorno.Alicuota = _acreditanRegistry.Porcentaje!.Value;
-                return retorno;
+                return _acreditanRegistry.Porcentaje!.Value;
             }
 
             if (_acreditanRegistry.Convenio == Convenio.Multilateral)
             {
                 if (!_coeficientesParaExistentes)
                 {
-                    retorno.Regimen = Regimen.Retencion;
-                    retorno.Alicuota = _acreditanRegistry.Porcentaje!.Value * 0.5;
-                    return retorno;
+                    return _acreditanRegistry.Porcentaje!.Value * 0.5;
                 }
 
-                //if (_coeficienteRegistry == null || _clientesRepository.EsLocal(_acreditanRegistry.Cuit!, _options.ProvinceCode!))
                 if (_coeficienteRegistry == null || _clientesRepository.EsLocalUsarCache(_acreditanRegistry.Cuit!))
                 {
-                    retorno.Regimen = Regimen.Retencion;
-                    retorno.Alicuota = _acreditanRegistry.Porcentaje!.Value * 0.5;
-                    return retorno;
+                    return _acreditanRegistry.Porcentaje!.Value * 0.5;
                 }
 
                 if (_coeficienteRegistry.Coeficiente > 0)
                 {
-                    retorno.Regimen = Regimen.Retencion;
-                    retorno.Alicuota = _coeficienteRegistry.Porcentaje!.Value * _coeficienteCorreccion;
-                    return retorno;
+                    return _coeficienteRegistry.Porcentaje!.Value * _coeficienteCorreccion;
                 }
 
-                retorno.Regimen = Regimen.Retencion;
-                retorno.Alicuota = _alicuotaEspecial;
-                return retorno;
+                return _alicuotaEspecial;
 
             }
-            return retorno;
-        }
-
-        private RetornoCalculadora SoloEnCoeficientes()
-        {
-            var retorno = new RetornoCalculadora();
-
-            if (_coeficienteRegistry!.Coeficiente == 0)
-            {
-                retorno.Regimen = Regimen.Retencion;
-                retorno.Alicuota = _alicuotaEspecial;
-                return retorno;
-            }
-
-            retorno.Regimen = Regimen.Retencion;
-            retorno.Alicuota = _coeficienteRegistry.Porcentaje!.Value * _coeficienteCorreccion;
-            return retorno;
+            return null;
         }
     }
 }

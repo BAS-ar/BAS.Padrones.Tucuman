@@ -88,22 +88,60 @@ var coeficientesSinPadron = await coeficientesAsync.Where(c => !padron.Any(p => 
 Console.WriteLine($"Se encontraron {coeficientesSinPadron.Count} coeficientes sin registro en el padrón");
 Console.WriteLine("Procesando registros de Acreditan...");
 
+
+// Advance Tax : Percepciones
+// Withholds : Retenciones
+// No hay palabra en inglés para diferenciarlos
+
+var advanceTaxConfig = new Configuracion();
+advanceTaxConfig.CargarDesdeFramework(configuration);
+var advanceTaxCalculator = new CalculadoraDeAlicuota(clienteRepository, advanceTaxConfig);
+
+var withholdsConfig = new Configuracion();
+withholdsConfig.CargarDesdeFramework(configuration);
+withholdsConfig.CoeficientesParaExistentes = true;
+withholdsConfig.CoeficientesParaInexistentes = true;
+var withholdsCalculator = new CalculadoraDeAlicuota(clienteRepository, withholdsConfig);
+
 int i = 0;
 foreach (var registry in padron)
 {
     Console.SetCursorPosition(0, Console.CursorTop);
     i++;
     var coeficiente = coeficientes.SingleOrDefault(c => c.Cuit == registry.Cuit);
-    var config = new Configuracion();
-    config.CargarDesdeFrameworks(configuration);
-    var calculadora = new CalculadoraDeAlicuota(clienteRepository, config, options);
-    calculadora.CargarAcreditanRegistry(registry);
-    calculadora.CargarCoeficientesRegistry(coeficiente);
-    var resultado = calculadora.CalcularAlicuota();
 
-    var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota, resultado.Regimen);
+    advanceTaxCalculator.CargarAcreditanRegistry(registry);
+    // Percepciones sólo se toma de acreditan pero
+    // si CoeficientesParaExistentes o CoeficientesParaInexistentes
+    // están en true, entonces sí se toman los valores
+    // de Coeficientes para Percepciones (?
+    advanceTaxCalculator.CargarCoeficientesRegistry(coeficiente);
+    var advanceTaxResult = advanceTaxCalculator.CalcularAlicuota();
 
-    outputFile.WriteLine(bsasRegistry.ToString());
+    if (advanceTaxResult == null)
+    {
+        Console.WriteLine($"CUIT {registry.Cuit} devolvió null al calcular percepciones");
+    }
+    else
+    {
+        var advanceTaxRecord = new PadronRegistry(registry, advanceTaxResult.Value, Regimen.Percepcion);
+        outputFile.WriteLine(advanceTaxRecord.ToString());
+    }
+
+    withholdsCalculator.CargarAcreditanRegistry(registry);
+    withholdsCalculator.CargarCoeficientesRegistry(coeficiente);
+    var withholdsResult = withholdsCalculator.CalcularAlicuota();
+
+    if (withholdsResult == null)
+    {
+        Console.WriteLine($"CUIT {registry.Cuit} devolvió null al calcular retenciones");
+    }
+    else
+    {
+        var withholdsRecord = new PadronRegistry(registry, withholdsResult.Value, Regimen.Retencion);
+        outputFile.WriteLine(withholdsRecord.ToString());
+    }
+
     Console.Write($"Se han procesado {i} registros de {padron.Count} ({(((double)i / (double)padron.Count) * 100).ToString("N0")}%)");
 }
 
@@ -114,15 +152,17 @@ foreach (var registry in coeficientesSinPadron)
 {
     Console.SetCursorPosition(0, Console.CursorTop);
     i++;
-    var config = new Configuracion();
-    config.CargarDesdeFrameworks(configuration);
-    var calculadora = new CalculadoraDeAlicuota(clienteRepository, config, options);
-    calculadora.CargarCoeficientesRegistry(registry);
-    var resultado = calculadora.CalcularAlicuota();
+    withholdsCalculator.CargarAcreditanRegistry(null);
+    withholdsCalculator.CargarCoeficientesRegistry(registry);
+    var withholdsResult = withholdsCalculator.CalcularAlicuota();
 
-    if (resultado != null)
+    if (withholdsResult == null)
     {
-        var bsasRegistry = new PadronRegistry(registry, resultado.Alicuota, resultado.Regimen);
+        Console.WriteLine($"{registry.Cuit} devolvio null al calcular alicuota sin registro en acreditan");
+    }
+    else 
+    { 
+        var bsasRegistry = new PadronRegistry(registry, withholdsResult.Value, Regimen.Retencion);
         outputFile.WriteLine(bsasRegistry.ToString());
     }
 

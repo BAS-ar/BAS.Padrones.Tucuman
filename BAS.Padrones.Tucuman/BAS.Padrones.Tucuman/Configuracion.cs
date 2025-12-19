@@ -10,7 +10,7 @@ namespace BAS.Padrones.Tucuman
         public bool CoeficientesParaExistentes = false;
         public bool CoeficientesParaInexistentes = false;
 
-        public void CargarDesdeFrameworks(IConfiguration configuration)
+        public void CargarDesdeFramework(IConfiguration configuration)
         {
             if (HasMoreThanTwoDecimals(configuration.GetSection("Alicuota especial").Get<string>()))
             {

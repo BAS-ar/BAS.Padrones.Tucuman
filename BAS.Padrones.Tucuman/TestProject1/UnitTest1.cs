@@ -66,12 +66,12 @@ namespace TestProject1
         [Test]
         public void ExcentoShouldReturnZeroAliquot()
         {
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             acreditanRegistry.Excento = true;
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(0));
+            Assert.That(result, Is.EqualTo(0));
         }
 
         [Test]
@@ -80,10 +80,10 @@ namespace TestProject1
             configuracion.CoeficientesParaExistentes = false;
             configuracion.CoeficientesParaInexistentes = false;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5));
+            Assert.That(result, Is.EqualTo(3.5));
         }
 
         [Test]
@@ -95,10 +95,10 @@ namespace TestProject1
             acreditanRegistry.Cuit = "2033344455"; // Cuit no local
             acreditanRegistry.Convenio = Convenio.Multilateral;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.5));
+            Assert.That(result, Is.EqualTo(3.5 * 0.5));
         }
 
 
@@ -108,10 +108,10 @@ namespace TestProject1
             configuracion.CoeficientesParaExistentes = true;
             configuracion.CoeficientesParaInexistentes = false;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5));
+            Assert.That(result, Is.EqualTo(3.5));
         }
 
         [Test]
@@ -122,10 +122,10 @@ namespace TestProject1
 
             acreditanRegistry.Convenio = Convenio.Multilateral;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.5));
+            Assert.That(result, Is.EqualTo(3.5 * 0.5));
         }
 
         [Test]
@@ -140,10 +140,10 @@ namespace TestProject1
             acreditanRegistry.Convenio = Convenio.Multilateral;
             coeficienteRegistry.Coeficiente = 0;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(1.75));
+            Assert.That(result, Is.EqualTo(1.75));
         }
 
         [Test]
@@ -158,11 +158,11 @@ namespace TestProject1
             coeficienteRegistry.Porcentaje = 3.5;
             configuracion.CoeficienteCorreccion = 0.7;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.7));
+            Assert.That(result, Is.EqualTo(3.5 * 0.7));
         }
 
         [Test]
@@ -171,10 +171,10 @@ namespace TestProject1
             configuracion.CoeficientesParaExistentes = false;
             configuracion.CoeficientesParaInexistentes = true;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5));
+            Assert.That(result, Is.EqualTo(3.5));
         }
 
         [Test]
@@ -186,10 +186,10 @@ namespace TestProject1
             acreditanRegistry.Cuit = "2033344455"; // Cuit no local
             acreditanRegistry.Convenio = Convenio.Multilateral;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.5));
+            Assert.That(result, Is.EqualTo(3.5 * 0.5));
         }
 
         [Test]
@@ -203,11 +203,11 @@ namespace TestProject1
             coeficienteRegistry.Porcentaje = 3.5;
             configuracion.CoeficienteCorreccion = 0.7;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.7));
+            Assert.That(result, Is.EqualTo(3.5 * 0.7));
         }
 
         [Test]
@@ -223,10 +223,10 @@ namespace TestProject1
             coeficienteRegistry.Porcentaje = 3.5;
             configuracion.CoeficienteCorreccion = 0.7;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(1.75));
+            Assert.That(result, Is.EqualTo(1.75));
         }
 
         [Test]
@@ -235,10 +235,10 @@ namespace TestProject1
             configuracion.CoeficientesParaExistentes = true;
             configuracion.CoeficientesParaInexistentes = true;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5));
+            Assert.That(result, Is.EqualTo(3.5));
         }
 
         [Test]
@@ -249,10 +249,10 @@ namespace TestProject1
 
             acreditanRegistry.Convenio = Convenio.Multilateral;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.5));
+            Assert.That(result, Is.EqualTo(3.5 * 0.5));
         }
 
         [Test]
@@ -266,10 +266,10 @@ namespace TestProject1
             acreditanRegistry.Convenio = Convenio.Multilateral;
             coeficienteRegistry = null;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.5));
+            Assert.That(result, Is.EqualTo(3.5 * 0.5));
         }
 
         [Test]
@@ -286,11 +286,11 @@ namespace TestProject1
             acreditanRegistry = null;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(1.75));
+            Assert.That(result, Is.EqualTo(1.75));
         }
 
 
@@ -308,11 +308,11 @@ namespace TestProject1
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
             acreditanRegistry.Convenio = Convenio.Multilateral;
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(1.75));
+            Assert.That(result, Is.EqualTo(1.75));
         }
 
         [Test]
@@ -329,159 +329,11 @@ namespace TestProject1
             acreditanRegistry = null;
             coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
 
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
+            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion);
             calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
             calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
             var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Alicuota, Is.EqualTo(3.5 * 0.7));
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Retencion));
-        }
-
-        [Test]
-        public void ExistentesTrueInexistentesFalseConRegistroEnAcreditanConRegistroEnCoeficientesDevuelvePercepcion()
-        {
-            configuracion.CoeficientesParaExistentes = true;
-            configuracion.CoeficientesParaInexistentes = false;
-
-            configuracion.AlicuotaEspecial = 1.75;
-            coeficienteRegistry.Coeficiente = 0.77;
-            coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.CoeficienteCorreccion = 0.7;
-
-            acreditanRegistry.Convenio = Convenio.Local;
-            coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
-
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
-            calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
-            calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
-            var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Percepcion));
-        }
-
-        [Test]
-        public void ExistentesTrueInexistentesFalseConRegistroEnAcreditanConRegistroEnCoeficientesDevuelveRetencion()
-        {
-            configuracion.CoeficientesParaExistentes = true;
-            configuracion.CoeficientesParaInexistentes = false;
-
-            configuracion.AlicuotaEspecial = 1.75;
-            coeficienteRegistry.Coeficiente = 0.77;
-            coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.CoeficienteCorreccion = 0.7;
-
-            acreditanRegistry.Convenio = Convenio.Multilateral;
-            coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
-
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
-            calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
-            calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
-            var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Retencion));
-        }
-
-        [Test]
-        public void ExistentesFalseInexistentesFalseConRegistroEnAcreditanConRegistroEnCoeficientesDevuelvePercepcion()
-        {
-            configuracion.CoeficientesParaExistentes = false;
-            configuracion.CoeficientesParaInexistentes = false;
-
-            configuracion.AlicuotaEspecial = 1.75;
-            coeficienteRegistry.Coeficiente = 0.77;
-            coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.CoeficienteCorreccion = 0.7;
-
-            acreditanRegistry.Convenio = Convenio.Local;
-            coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
-
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
-            calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
-            calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
-            var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Percepcion));
-        }
-
-        [Test]
-        public void ExistentesFalseInexistentesFalseConRegistroEnAcreditanConRegistroEnCoeficientesDevuelveRetencion()
-        {
-            configuracion.CoeficientesParaExistentes = false;
-            configuracion.CoeficientesParaInexistentes = false;
-
-            configuracion.AlicuotaEspecial = 1.75;
-            coeficienteRegistry.Coeficiente = 0.77;
-            coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.CoeficienteCorreccion = 0.7;
-
-            acreditanRegistry.Convenio = Convenio.Multilateral;
-            coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
-
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
-            calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
-            calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
-            var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Retencion));
-        }
-
-        [Test]
-        public void ExistentesFalseInexistentesTrueConRegistroEnAcreditanConRegistroEnCoeficientesDevuelvePercepcion()
-        {
-            configuracion.CoeficientesParaExistentes = false;
-            configuracion.CoeficientesParaInexistentes = true;
-
-            configuracion.AlicuotaEspecial = 1.75;
-            coeficienteRegistry.Coeficiente = 0.77;
-            coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.CoeficienteCorreccion = 0.7;
-
-            acreditanRegistry.Convenio = Convenio.Local;
-            coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
-
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
-            calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
-            calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
-            var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Percepcion));
-        }
-
-        [Test]
-        public void ExistentesFalseInexistentesTrueSinRegistroEnAcreditanConRegistroEnCoeficientesDevuelveRetencion()
-        {
-            configuracion.CoeficientesParaExistentes = false;
-            configuracion.CoeficientesParaInexistentes = true;
-
-            configuracion.AlicuotaEspecial = 1.75;
-            coeficienteRegistry.Coeficiente = 0.77;
-            coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.CoeficienteCorreccion = 0.7;
-
-            acreditanRegistry = null;
-            coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
-
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
-            calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
-            calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
-            var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Retencion));
-        }
-
-        [Test]
-        public void ExistentesTrueInexistentesTrueSinRegistroEnAcreditanConRegistroEnCoeficientesDevuelveRetencion()
-        {
-            configuracion.CoeficientesParaExistentes = true;
-            configuracion.CoeficientesParaInexistentes = true;
-
-            configuracion.AlicuotaEspecial = 1.75;
-            coeficienteRegistry.Coeficiente = 0.77;
-            coeficienteRegistry.Porcentaje = 3.5;
-            configuracion.CoeficienteCorreccion = 0.7;
-
-            acreditanRegistry = null;
-            coeficienteRegistry.Cuit = "2033344455"; // Cuit no local
-
-            calculadoraDeAlicuota = new CalculadoraDeAlicuota(clientesRepository, configuracion, options);
-            calculadoraDeAlicuota.CargarAcreditanRegistry(acreditanRegistry);
-            calculadoraDeAlicuota.CargarCoeficientesRegistry(coeficienteRegistry);
-            var result = calculadoraDeAlicuota.CalcularAlicuota();
-            Assert.That(result.Regimen, Is.EqualTo(Regimen.Retencion));
+            Assert.That(result, Is.EqualTo(3.5 * 0.7));
         }
     }
 }

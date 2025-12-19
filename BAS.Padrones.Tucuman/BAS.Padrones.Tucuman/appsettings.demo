@@ -2,8 +2,8 @@
   "Database": {
     "Server": "SERVER_NAME",
     "Database": "DATABASE_NAME",
-    "User": "sa",
-    "Password": "sa"
+    "User": "USER_NAME",
+    "Password": "PASSWORD"
   },
   "Evaluar coeficientes para existentes en padron": true,
   "Evaluar coeficientes para inexistentes en padron": true,

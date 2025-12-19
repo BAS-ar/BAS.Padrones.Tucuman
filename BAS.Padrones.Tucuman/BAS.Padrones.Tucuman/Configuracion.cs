@@ -19,18 +19,41 @@ namespace BAS.Padrones.Tucuman
 
             CoeficienteCorreccion = SanitizeDouble(configuration.GetSection("Coeficiente correccion").Get<string>());
             AlicuotaEspecial = SanitizeDouble(configuration.GetSection("Alicuota especial").Get<string>());
-            CoeficientesParaExistentes = configuration.GetSection("Evaluar coeficientes para existentes en padron").Get<bool>();
-            CoeficientesParaInexistentes = configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Get<bool>();
 
-            if(CoeficienteCorreccion == 0)
+            if (configuration.GetSection("Evaluar coeficientes para existentes en padron").Exists())
             {
-                CoeficienteCorreccion = 1;
+                CoeficientesParaExistentes = configuration.GetSection("Evaluar coeficientes para existentes en padron").Get<bool>();
+            }
+            else
+            {
+                Console.WriteLine("No existe la clave \"Evaluar coeficientes para existentes en padrón\" configurando en false");
+                CoeficientesParaExistentes = false;
+            }
+
+            if (configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Exists())
+            {
+                CoeficientesParaInexistentes = configuration.GetSection("Evaluar coeficientes para inexistentes en padron").Get<bool>();
+            }
+            else
+            {
+                Console.WriteLine("No existe la clave \"Evaluar coeficientes para inexistentes en padrón\" configurando en false");
+                CoeficientesParaInexistentes = false;
+            }
+
+            if (CoeficienteCorreccion <= 0)
+            {
+                throw new Exception($"El valor del coeficiente correccion es cero o menor que cero");
+            }
+
+            if (AlicuotaEspecial <= 0)
+            {
+                throw new Exception($"El valor la alicuota especial es cero o menor que cero");
             }
         }
 
         public double SanitizeDouble(string? value)
         {
-            if(string.IsNullOrWhiteSpace(value)) return 0.0;
+            if (string.IsNullOrWhiteSpace(value)) return 0.0;
 
             value = value.Replace(',', '.');
             return Double.Parse(value, CultureInfo.InvariantCulture);
@@ -44,11 +67,11 @@ namespace BAS.Padrones.Tucuman
 
             value = value.Replace(',', '.');
             var parts = value.Split('.');
-            
+
             // invalid case
             if (parts.Length > 2)
                 return true;
-            
+
             if (parts.Length == 1)
                 return false;
 

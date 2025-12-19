@@ -1,13 +1,8 @@
-﻿// 2025-10-09
-// Iván Sierra
-// BAS Software
-
-using BAS.Padrones.Tucuman;
+﻿using BAS.Padrones.Tucuman;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.Text;
-//using CommandLine; 
 
 string acreditanFilepath = "";
 string coeficientesFilepath = "";
@@ -15,7 +10,7 @@ string outputFilepath = "";
 string provinceCode = "";
 
 var parser = new Parser(args);
-var options = parser.GetOptions(); 
+var options = parser.GetOptions();
 
 acreditanFilepath = options.AcreditanFilepath ?? "acreditan.txt";
 coeficientesFilepath = options.CoeficientesFilepath ?? "coeficientes.txt";
@@ -37,13 +32,23 @@ var connectionString =
     $"Password={configuration["Database:Password"]};" +
     $"TrustServerCertificate=True";
 
-// Access to the database. This is extremely slow. Like 700% slower.
+var advanceTaxConfig = new Configuracion();
+try
+{
+    advanceTaxConfig.CargarDesdeFramework(configuration);
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Error al cargar parámetros: {ex.Message}");
+    return;
+}
+
 var clienteRepository = new ClientesRepository(connectionString);
 try
 {
     clienteRepository.ObtenerClientesLocales(provinceCode);
 }
-catch(SqlException sqlEx)
+catch (SqlException sqlEx)
 {
     Console.WriteLine($"Ocurrió un error al conectarse a la base de datos. Error: {sqlEx.Message}");
     return;
@@ -80,8 +85,6 @@ catch (Exception ex)
 }
 
 Console.WriteLine("Buscando coeficientes sin registros en el padrón...");
-// This uses 30% of the time
-// var coeficientesSinPadron = coeficientes.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToList();
 IAsyncEnumerable<CoeficienteRegistry> coeficientesAsync = coeficientes.ToAsyncEnumerable();
 var coeficientesSinPadron = await coeficientesAsync.Where(c => !padron.Any(p => p.Cuit == c.Cuit)).ToListAsync();
 
@@ -91,16 +94,15 @@ Console.WriteLine("Procesando registros de Acreditan...");
 
 // Advance Tax : Percepciones
 // Withholds : Retenciones
-// No hay palabra en inglés para diferenciarlos
-
-var advanceTaxConfig = new Configuracion();
-advanceTaxConfig.CargarDesdeFramework(configuration);
 var advanceTaxCalculator = new CalculadoraDeAlicuota(clienteRepository, advanceTaxConfig);
 
-var withholdsConfig = new Configuracion();
-withholdsConfig.CargarDesdeFramework(configuration);
-withholdsConfig.CoeficientesParaExistentes = true;
-withholdsConfig.CoeficientesParaInexistentes = true;
+var withholdsConfig = new Configuracion()
+{
+    AlicuotaEspecial = advanceTaxConfig.AlicuotaEspecial,
+    CoeficienteCorreccion = advanceTaxConfig.CoeficienteCorreccion,
+    CoeficientesParaInexistentes = true,
+    CoeficientesParaExistentes = true
+};
 var withholdsCalculator = new CalculadoraDeAlicuota(clienteRepository, withholdsConfig);
 
 int i = 0;
@@ -160,8 +162,8 @@ foreach (var registry in coeficientesSinPadron)
     {
         Console.WriteLine($"{registry.Cuit} devolvio null al calcular alicuota sin registro en acreditan");
     }
-    else 
-    { 
+    else
+    {
         var bsasRegistry = new PadronRegistry(registry, withholdsResult.Value, Regimen.Retencion);
         outputFile.WriteLine(bsasRegistry.ToString());
     }
@@ -176,6 +178,6 @@ var fInfo = new FileInfo(outputFilepath);
 sw.Stop();
 
 Console.WriteLine();
-Console.WriteLine($"Archivo de salida almacenado en {outputFilepath} ({(fInfo.Length/(double)1024).ToString("0")} kiB)");
+Console.WriteLine($"Archivo de salida almacenado en {outputFilepath} ({(fInfo.Length / (double)1024).ToString("0")} kiB)");
 Console.WriteLine($"Procesado en {sw.Elapsed}");
 Console.CursorVisible = true;

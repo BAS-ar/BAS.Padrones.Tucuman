@@ -14,6 +14,9 @@ namespace BAS.Padrones.Tucuman
         // Chars (followed by 2 spaces afterwards)
         // 11   1      2        8     8     150          3
 
+        public int ErrorCount = 0;
+        public int ErrorCountMaxAllowed = 50;
+
         string _filePath = "";
 
         public TucumanAcreditanReader(string filePath)
@@ -30,22 +33,34 @@ namespace BAS.Padrones.Tucuman
             {
 
                 string? line = "";
-                reader.ReadLine(); // We skip the column's names
+                // Needed no more as now we handle all failed lines
+                // reader.ReadLine(); // We skip the column's names
                 while ((line = reader.ReadLine()) != null)
                 {
-                    var registry = new AcreditanRegistry()
+                    try
                     {
-                        Cuit = line.Substring(0, 13).TrimEnd(),
-                        Excento = line.Substring(13, 3).TrimEnd() == "E",
-                        Convenio = line.Substring(16, 4).TrimEnd() == "CM" ? Convenio.Multilateral : Convenio.Local,
-                        FechaDesde = DateTime.ParseExact(line.Substring(20, 8).TrimEnd(), "yyyyMMdd", CultureInfo.InvariantCulture),
-                        FechaHasta = DateTime.ParseExact(line.Substring(30, 8).TrimEnd(), "yyyyMMdd", CultureInfo.InvariantCulture),
-                        Denominacion = line.Substring(40, 150).TrimEnd()
-                    };
+                        var registry = new AcreditanRegistry()
+                        {
+                            Cuit = line.Substring(0, 13).TrimEnd(),
+                            Excento = line.Substring(13, 3).TrimEnd() == "E",
+                            Convenio = line.Substring(16, 4).TrimEnd() == "CM" ? Convenio.Multilateral : Convenio.Local,
+                            FechaDesde = DateTime.ParseExact(line.Substring(20, 8).TrimEnd(), "yyyyMMdd", CultureInfo.InvariantCulture),
+                            FechaHasta = DateTime.ParseExact(line.Substring(30, 8).TrimEnd(), "yyyyMMdd", CultureInfo.InvariantCulture),
+                            Denominacion = line.Substring(40, 150).TrimEnd()
+                        };
 
-                    registry.ParsePorcentaje(line);
+                        registry.ParsePorcentaje(line);
 
-                    padron.Add(registry);
+                        padron.Add(registry);
+                    }
+                    catch (Exception ex)
+                    { 
+                        ErrorCount++;
+                        if(ErrorCount >= ErrorCountMaxAllowed)
+                        {
+                            throw new ExcededParsingErrorCountException("Se superó el máximo aceptado de líneas con formato erroneo", ex);
+                        }
+                    }
                 }
             }
 

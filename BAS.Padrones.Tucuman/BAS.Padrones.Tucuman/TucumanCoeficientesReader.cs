@@ -9,6 +9,9 @@ namespace BAS.Padrones.Tucuman
 
         string _filePath = "";
 
+        public int ErrorCount = 0;
+        public int ErrorCountMaxAllowed = 50;
+
         public TucumanCoeficientesReader(string filePath)
         {
             _filePath = filePath;
@@ -22,21 +25,33 @@ namespace BAS.Padrones.Tucuman
             using (TextReader reader = new StreamReader(coeficientesFileStream, Encoding.UTF8))
             {
                 string? line = "";
-                reader.ReadLine(); // We skip the column's names
+                // Needed no more as now we handle all failed lines
+                // reader.ReadLine(); // We skip the column's names
                 while ((line = reader.ReadLine()) != null)
                 {
-                    var registry = new CoeficienteRegistry()
+                    try
                     {
-                        Cuit = line.Substring(0, 13).TrimEnd(),
-                        Excento = line.Substring(13, 3).TrimEnd() == "E",
-                        Fecha = DateTime.ParseExact(line.Substring(24, 6).TrimEnd(), "yyyyMM", CultureInfo.InvariantCulture),
-                        Denominacion = line.Substring(32, 150).TrimEnd()
-                    };
+                        var registry = new CoeficienteRegistry()
+                        {
+                            Cuit = line.Substring(0, 13).TrimEnd(),
+                            Excento = line.Substring(13, 3).TrimEnd() == "E",
+                            Fecha = DateTime.ParseExact(line.Substring(24, 6).TrimEnd(), "yyyyMM", CultureInfo.InvariantCulture),
+                            Denominacion = line.Substring(32, 150).TrimEnd()
+                        };
 
-                    registry.ParseCoeficiente(line);
-                    registry.ParsePorcentaje(line);
+                        registry.ParseCoeficiente(line);
+                        registry.ParsePorcentaje(line);
 
-                    padron.Add(registry);
+                        padron.Add(registry);
+                    }
+                    catch (Exception ex)
+                    {
+                        ErrorCount++;
+                        if (ErrorCount >= ErrorCountMaxAllowed)
+                        {
+                            throw new ExcededParsingErrorCountException("Se superó el máximo aceptado de líneas con formato erroneo", ex);
+                        }
+                    }
                 }
             }
 

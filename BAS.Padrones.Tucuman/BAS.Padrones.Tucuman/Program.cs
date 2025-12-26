@@ -64,6 +64,15 @@ List<AcreditanRegistry> padron = new();
 try
 {
     padron = readerAcreditan.GetRegistries();
+    if(readerAcreditan.ErrorCount > 0)
+    {
+        Console.WriteLine($"Se han saltado {readerAcreditan.ErrorCount} líneas con formato erroneo (se puede ignorar).");
+    }
+}
+catch (ExcededParsingErrorCountException epece)
+{
+    Console.WriteLine($"Se superó el máximo aceptado de líneas incorrectas. Abortando.");
+    return;
 }
 catch (Exception ex)
 {
@@ -77,6 +86,15 @@ List<CoeficienteRegistry> coeficientes = new();
 try
 {
     coeficientes = readerCoeficientes.GetRegistries();
+    if (readerCoeficientes.ErrorCount > 0)
+    {
+        Console.WriteLine($"Se han saltado {readerAcreditan.ErrorCount} líneas con formato erroneo (se puede ignorar).");
+    }
+}
+catch (ExcededParsingErrorCountException epece)
+{
+    Console.WriteLine($"Se superó el máximo aceptado de líneas incorrectas. Abortando.");
+    return;
 }
 catch (Exception ex)
 {

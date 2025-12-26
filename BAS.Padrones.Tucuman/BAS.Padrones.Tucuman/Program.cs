@@ -66,7 +66,7 @@ try
     padron = readerAcreditan.GetRegistries();
     if(readerAcreditan.ErrorCount > 0)
     {
-        Console.WriteLine($"Se han saltado {readerAcreditan.ErrorCount} líneas con formato erroneo (se puede ignorar).");
+        Console.WriteLine($"Se han saltado {readerAcreditan.ErrorCount} líneas.");
     }
 }
 catch (ExcededParsingErrorCountException epece)
@@ -88,7 +88,7 @@ try
     coeficientes = readerCoeficientes.GetRegistries();
     if (readerCoeficientes.ErrorCount > 0)
     {
-        Console.WriteLine($"Se han saltado {readerAcreditan.ErrorCount} líneas con formato erroneo (se puede ignorar).");
+        Console.WriteLine($"Se han saltado {readerAcreditan.ErrorCount} líneas.");
     }
 }
 catch (ExcededParsingErrorCountException epece)
